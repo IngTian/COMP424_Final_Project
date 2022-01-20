@@ -29,15 +29,23 @@ import javax.swing.filechooser.FileFilter;
 /**
  * GUI for the server. Can also be run standalone to examine a logfile, or to
  * launch servers/clients.
- *
+ * <p>
  * No synchronization is done in this class. It is assumed that any external
  * calls are invoked by the AWT event dispatch thread.
  */
 public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
-    /** The list of games for which servers can be launched */
-    protected static final String[] BOARD_CLASSES = { "pentago_twist.PentagoBoard" };
-    /** The list of players that can be launched */
-    protected static final String[] PLAYER_CLASSES = { "pentago_twist.RandomPentagoPlayer", "student_player.StudentPlayer" };
+    /**
+     * The list of games for which servers can be launched
+     */
+    protected static final String[] BOARD_CLASSES = {"pentago_twist.PentagoBoard"};
+    /**
+     * The list of players that can be launched
+     */
+    protected static final String[] PLAYER_CLASSES = {
+            "pentago_twist.RandomPentagoPlayer",
+            "student_player.StudentPlayer",
+            "student_player.AdversaryPlayer"
+    };
     private static final int BOARD_SIZE = 800;
     private static final int LIST_WIDTH = 280;
 
@@ -94,7 +102,9 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
         setServer(svr);
     }
 
-    /** Set the server from which we are receiving moves */
+    /**
+     * Set the server from which we are receiving moves
+     */
     private void setServer(Server svr) {
         this.server = svr;
         // Create a human player object and an action to launch it
@@ -351,7 +361,9 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
         }
     }
 
-    /** Clears all the move/board data */
+    /**
+     * Clears all the move/board data
+     */
     private void clearData() {
         // How many moves in the list
         int max = moveHistory.size() - 1;
@@ -426,13 +438,17 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
         }
     }
 
-    /** Called by server when waiting for connection */
+    /**
+     * Called by server when waiting for connection
+     */
     void waitingForConnection(String playerID) {
         enableLaunchActions(true);
         statusLabel.setText("Waiting for " + playerID + " to connect... " + "(Use 'Launch' menu to launch clients)");
     }
 
-    /** Called by server on game start */
+    /**
+     * Called by server on game start
+     */
     void gameStarted(Board b, int gameID, String[] players) {
         clearData();
         getContentPane().remove(boardPanel);
@@ -458,7 +474,9 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
         statusLabel.setText("Game in progress, " + board.getNameForID(board.getTurnPlayer()) + " to play.");
     }
 
-    /** Called by server on update */
+    /**
+     * Called by server on update
+     */
     void boardUpdated(Board b, Move m) {
         moveHistory.add(m);
         this.moveListModel.addedMove();
@@ -473,7 +491,9 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
             statusLabel.setText("Game in progress, " + board.getNameForID(board.getTurnPlayer()) + " to play.");
     }
 
-    /** Called by server on game end */
+    /**
+     * Called by server on game end
+     */
     void gameEnded(String str) {
         // In case the game was in progress, may have
         // been waiting for a user move
@@ -516,7 +536,9 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
         }
     }
 
-    /** The HumanPlayer wants a move from the user */
+    /**
+     * The HumanPlayer wants a move from the user
+     */
     private void getMoveFromUser() {
         // Indicate that we should get a move from the user
         this.userMoveNeeded = true;
@@ -526,7 +548,9 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
         statusLabel.setText("Waiting for user to play as " + bb.getNameForID(bb.getTurnPlayer()) + "...");
     }
 
-    /** Callback from the boardPanel */
+    /**
+     * Callback from the boardPanel
+     */
     public void moveEntered(Move m) {
         if (!userMoveNeeded) {
             System.err.println("Unexpected user move received from BoardPanel");
@@ -540,7 +564,9 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
 
     // UTILITY CLASSES FOLLOW
 
-    /** A player to represent a human entering moves into the server GUI */
+    /**
+     * A player to represent a human entering moves into the server GUI
+     */
     private class HumanPlayer extends Player implements BoardPanel.BoardPanelListener {
         public HumanPlayer(Board bd) {
             super("Human");
@@ -558,10 +584,14 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
         };
 
         public void movePlayed(BoardState bs, Move m) {
-        };
+        }
+
+        ;
 
         public void gameOver(String msg, BoardState bs) {
-        };
+        }
+
+        ;
 
         /* Called by client threads when user input is needed */
         synchronized public Move chooseMove(BoardState bs) {
@@ -650,7 +680,9 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
                 ex.printStackTrace();
             }
         }
-    };
+    }
+
+    ;
 
     // An action to launch a client
     private class LaunchClientAction extends AbstractAction {
@@ -703,6 +735,8 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
         void cleared(int maxIndex) {
             this.fireIntervalRemoved(this, 0, maxIndex);
         }
-    };
+    }
+
+    ;
 
 } // end class ServerGUI
